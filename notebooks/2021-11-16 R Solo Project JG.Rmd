@@ -1,0 +1,75 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
+```{r}
+library(tidyverse)
+```
+
+```{r}
+districts<- read_csv('../data/districts.csv')
+```
+```{r}
+districts
+```
+
+```{r}
+districts<-districts %>% 
+  filter(system_name != 'State of Tennessee')
+```
+
+```{r}
+districts %>%
+  filter(alg_1 >= 80, eng_1 >= 80)
+```
+```{r}
+districts %>% 
+  filter(alg_1<50, eng_1<50)
+```
+
+```{r}
+districts %>% 
+  select(system_name, grad) %>% 
+  arrange(grad)
+```
+
+```{r}
+districts %>% 
+  select(system_name, dropout) %>% 
+  arrange(desc(dropout))
+```
+```{r}
+districts %>% 
+  filter(region == 'Mid Cumberland') %>% 
+  arrange(desc(act_composite))
+
+```
+```{r}
+districts %>% 
+  ggplot(aes(grad))+
+  geom_histogram(fill = 'blue', color = 'black')
+```
+```{r}
+districts %>% 
+  ggplot(aes(x= alg_1, y = alg_2))+
+  geom_point()+
+  geom_smooth(method = 'lm')
+```
+```{r}
+districts %>% 
+  ggplot(aes(x= alg_1, y = alg_2))+
+  geom_point()+
+  geom_smooth(method = 'lm')+
+  facet_wrap(~region)
+```
+
+```{r}
+districts %>% 
+  ggplot(aes(x=enrollment, fill = region))+
+  geom_bar()
+```
+
