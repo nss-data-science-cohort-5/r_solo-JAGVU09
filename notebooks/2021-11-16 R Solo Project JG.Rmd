@@ -173,7 +173,9 @@ districts %>%
 ```
 
 
-17. For many districts, values for `alg_2` are lower than for `alg_1`. Create a histogram showing the distribution of differences (`alg_1` - `alg_2`). Which school had the largest drop from `alg_1` to `alg_2`? For what percentage of schools is it true that `alg_2` is larger than `alg_1`? Is there a similar dropoff for `eng_2` and `eng_3`?
+17. For many districts, values for `alg_2` are lower than for `alg_1`. Create a histogram showing the distribution of differences (`alg_1` - `alg_2`). Which school had the largest drop from `alg_1` to `alg_2`? Pickett County
+For what percentage of schools is it true that `alg_2` is larger than `alg_1`? 12%
+Is there a similar dropoff for `eng_2` and `eng_3`? Only 1 districts has a higher eng_3 score than eng_2 score.
 ```{r}
 districts %>% 
   mutate(alg=alg_1-alg_2) %>% 
@@ -189,13 +191,60 @@ districts %>%
 
 ```{r}
 districts %>% 
-  mutate(Mathwizards = )
+  filter(is.na(alg_1)) %>% 
+  count()
+```
+
+```{r}
+districts %>% 
+  filter(is.na(alg_2)) %>% 
+  count()
+```
+
+```{r}
+mathwizards<-districts %>% 
+  filter(!is.na(alg_1), !is.na(alg_2)) %>% 
+  filter(when(alg_2, alg_2>alg_1))
+#this only has the sum of districts where alg2 is greater than alg1. I need to divide by the total number of districts where alg1/2 is not Na. Find out how many in each one that are NA. there may not be any or may be a lot.
+#21 NAs for alg_1, 25 NAs for alg_2
+
+# there 145 total districts(NAs not removed), and 18 districts where alg_2 is larger than alg_1 when NAs are removed. This equates to 12% of the total districts. 
+```
+
+```{r}
+wordwizards <- districts %>% 
+  filter(!is.na(eng_3), !is.na(eng_2)) %>% 
+  filter(when(eng_3, eng_3>eng_2))
+```
+
+```{r}
+wordwizards
+```
+
+18. You may have noticed that a lot of rows are missing values. Which district has the largest number of missing values? What do you notice about schools that have a lot of missing values? 
+West Tenn School for the Deaf has the most NAs. There are quite a few schools that are 'Special School Districts', which from doing a little digging, look like districts within districts. They also appear to be tied to desegregation and unfortunately as a way to resist integration.   https://www.washingtonpost.com/education/2019/12/16/lines-that-divide-school-district-boundaries-often-stymie-integration/
+
+```{r}
+districts %>% 
+  mutate(NAs_row = rowSums(is.na(.))) %>% 
+  arrange(desc(NAs_row))
 ```
 
 
-18. You may have noticed that a lot of rows are missing values. Which district has the largest number of missing values? What do you notice about schools that have a lot of missing values?
-
 19. Find the correlation between graduation rate and all other variables. Create a horizontal bar chart showing these correlations. Make sure that your plot is ordered by correlation values. What do you notice from these correlations?
+
+```{r}
+districts_corr <- districts %>%
+  select(where(is.numeric)) %>% 
+  cor(use = 'pairwise.complete.obs') 
+```
+
+```{r}
+districts_corr %>% 
+  ggplot()+
+  geom_col()
+```
+
 
 20. Create a scatterplot for `grad` vs. `suspended`. Does what you see make sense given your answer from the previous part?
 
